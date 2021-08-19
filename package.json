@@ -1,0 +1,22 @@
+{
+  "name": "featured-plugin",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vacb/wp-featured-post-plugin.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/vacb/wp-featured-post-plugin/issues"
+  },
+  "homepage": "https://github.com/vacb/wp-featured-post-plugin#readme",
+  "dependencies": {
+    "@wordpress/scripts": "^17.1.0"
+  }
+}
