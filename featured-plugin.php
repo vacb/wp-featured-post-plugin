@@ -10,6 +10,8 @@ Author URI: https://github.com/vacb
 // Exit if accessed directly
 if( ! defined('ABSPATH')) exit;
 
+require_once plugin_dir_path( __FILE__ ) . 'inc/generateAcademicHTML.php';
+
 class FeaturedAcademic {
   function __construct() {
     add_action('init', [$this, 'onInit']);
@@ -27,7 +29,12 @@ class FeaturedAcademic {
   }
 
   function renderCallback($attributes) {
-    return '<p>We will replace this content soon.</p>';
+    if($attributes['academicId']) {
+      wp_enqueue_style('featuredAcademicStyle');
+      return generateAcademicHTML($attributes['academicId']);
+    }else {
+      return NULL;
+    }
   }
 
 }
