@@ -16,8 +16,8 @@ class FeaturedAcademic {
   }
 
   function onInit() {
-    wp_register_script('featuredProfessorScript', plugin_dir_url(__FILE__) . 'build/index.js', array('wp-blocks', 'wp-i18n', 'wp-editor'));
-    wp_register_style('featuredProfessorStyle', plugin_dir_url(__FILE__) . 'build/index.css');
+    wp_register_script('featuredAcademicScript', plugin_dir_url(__FILE__) . 'build/index.js', array('wp-blocks', 'wp-i18n', 'wp-editor'));
+    wp_register_style('featuredAcademicStyle', plugin_dir_url(__FILE__) . 'build/index.css');
 
     register_block_type('ourplugin/featured-academic', array(
       'render_callback' => [$this, 'renderCallback'],
@@ -25,11 +25,11 @@ class FeaturedAcademic {
       'editor_style' => 'featuredAcademicStyle'
     ));
   }
-  
+
   function renderCallback($attributes) {
     return '<p>We will replace this content soon.</p>';
   }
 
 }
 
-$featuredProfessor = new FeaturedProfessor();
+$featuredAcademic = new FeaturedAcademic();
