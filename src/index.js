@@ -1,5 +1,7 @@
 import "./index.scss";
 import { useSelect } from "@wordpress/data";
+import { useState, useEffect } from "react";
+import apiFetch from "@wordpress/api-fetch";
 
 wp.blocks.registerBlockType("ourplugin/featured-academic", {
   title: "Academic Callout",
@@ -16,6 +18,19 @@ wp.blocks.registerBlockType("ourplugin/featured-academic", {
 });
 
 function EditComponent(props) {
+  const [thePreview, setThePreview] = useState("test");
+  useEffect(() => {
+    async function go() {
+      const response = await apiFetch({
+        // Assumes /wp-json at the start
+        path: `/featuredAcademic/v1/getHTML?academicId=${props.attributes.academicId}`,
+        method: "GET",
+      });
+      setThePreview(response);
+    }
+    go();
+  }, [props.attributes.academicId]);
+
   const allAcademics = useSelect((select) => {
     // In console: wp.data.select("core").getEntityRecords("postType", "academic", {per_page: -1})
     // Returns an array of all academic post type posts - can use instead of GET request to api endpoint
@@ -25,7 +40,7 @@ function EditComponent(props) {
     });
   });
 
-  console.log(allAcademics);
+  // console.log(allAcademics);
   if (allAcademics == undefined) return <p>Loading...</p>;
 
   return (
@@ -47,7 +62,7 @@ function EditComponent(props) {
           })}
         </select>
       </div>
-      <div>HTML preview of selected academic here.</div>
+      <div dangerouslySetInnerHTML={{ __html: thePreview }}></div>
     </div>
   );
 }

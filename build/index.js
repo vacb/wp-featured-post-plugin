@@ -100,6 +100,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _index_scss__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./index.scss */ "./src/index.scss");
 /* harmony import */ var _wordpress_data__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @wordpress/data */ "@wordpress/data");
 /* harmony import */ var _wordpress_data__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_wordpress_data__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react */ "react");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @wordpress/api-fetch */ "@wordpress/api-fetch");
+/* harmony import */ var _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_4__);
+
+
 
 
 
@@ -120,6 +126,19 @@ wp.blocks.registerBlockType("ourplugin/featured-academic", {
 });
 
 function EditComponent(props) {
+  const [thePreview, setThePreview] = Object(react__WEBPACK_IMPORTED_MODULE_3__["useState"])("test");
+  Object(react__WEBPACK_IMPORTED_MODULE_3__["useEffect"])(() => {
+    async function go() {
+      const response = await _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_4___default()({
+        // Assumes /wp-json at the start
+        path: `/featuredAcademic/v1/getHTML?academicId=${props.attributes.academicId}`,
+        method: "GET"
+      });
+      setThePreview(response);
+    }
+
+    go();
+  }, [props.attributes.academicId]);
   const allAcademics = Object(_wordpress_data__WEBPACK_IMPORTED_MODULE_2__["useSelect"])(select => {
     // In console: wp.data.select("core").getEntityRecords("postType", "academic", {per_page: -1})
     // Returns an array of all academic post type posts - can use instead of GET request to api endpoint
@@ -127,8 +146,8 @@ function EditComponent(props) {
     return select("core").getEntityRecords("postType", "academic", {
       per_page: -1
     });
-  });
-  console.log(allAcademics);
+  }); // console.log(allAcademics);
+
   if (allAcademics == undefined) return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])("p", null, "Loading...");
   return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])("div", {
     className: "featured-academic-wrapper"
@@ -145,7 +164,11 @@ function EditComponent(props) {
       value: academic.id,
       selected: props.attributes.academicId == academic.id
     }, academic.title.rendered);
-  }))), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])("div", null, "HTML preview of selected academic here."));
+  }))), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])("div", {
+    dangerouslySetInnerHTML: {
+      __html: thePreview
+    }
+  }));
 }
 
 /***/ }),
@@ -161,6 +184,17 @@ function EditComponent(props) {
 __webpack_require__.r(__webpack_exports__);
 // extracted by mini-css-extract-plugin
 
+
+/***/ }),
+
+/***/ "@wordpress/api-fetch":
+/*!**********************************!*\
+  !*** external ["wp","apiFetch"] ***!
+  \**********************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+(function() { module.exports = window["wp"]["apiFetch"]; }());
 
 /***/ }),
 
@@ -183,6 +217,17 @@ __webpack_require__.r(__webpack_exports__);
 /***/ (function(module, exports) {
 
 (function() { module.exports = window["wp"]["element"]; }());
+
+/***/ }),
+
+/***/ "react":
+/*!************************!*\
+  !*** external "React" ***!
+  \************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+(function() { module.exports = window["React"]; }());
 
 /***/ })
 
