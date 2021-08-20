@@ -108,7 +108,9 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+ // Available from global scope - need to use like this for Loco Translate plugin
 
+const __ = wp.i18n.__;
 wp.blocks.registerBlockType("ourplugin/featured-academic", {
   title: "Academic Callout",
   description: "Include a short description and link to an academic",
@@ -189,7 +191,7 @@ function EditComponent(props) {
     })
   }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])("option", {
     value: ""
-  }, "Select an academic"), allAcademics.map(academic => {
+  }, __("Select an academic", "featured-academic")), allAcademics.map(academic => {
     return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])("option", {
       value: academic.id,
       selected: props.attributes.academicId == academic.id

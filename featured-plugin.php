@@ -5,6 +5,8 @@ Plugin Name: Featured Academic Block Type
 Version: 1.0
 Author: Victoria
 Author URI: https://github.com/vacb
+Text Domain: featured-academic
+Domain Path: /languages
 */
 
 // Exit if accessed directly
@@ -49,6 +51,8 @@ class FeaturedAcademic {
   // REGISTER BLOCK TYPE
   // REGISTER META FOR FEATURED ACADEMIC LINK
   function onInit() {
+    load_plugin_textdomain('featured-academic', false, dirname(plugin_basename(__FILE__)) . '/languages');
+
     register_meta('post', 'featuredAcademic', array(
       'show_in_rest' => true,
       'type' => 'number',
@@ -58,6 +62,9 @@ class FeaturedAcademic {
 
     wp_register_script('featuredAcademicScript', plugin_dir_url(__FILE__) . 'build/index.js', array('wp-blocks', 'wp-i18n', 'wp-editor'));
     wp_register_style('featuredAcademicStyle', plugin_dir_url(__FILE__) . 'build/index.css');
+
+    // Tell WP to tie the specified JS file to the translation system and provide location of language files
+    wp_set_script_translations('featuredAcademicScript', 'featured-academic', plugin_dir_path(__FILE__) . '/languages');
 
     register_block_type('ourplugin/featured-academic', array(
       'render_callback' => [$this, 'renderCallback'],

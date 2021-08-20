@@ -2,6 +2,8 @@ import "./index.scss";
 import { useSelect } from "@wordpress/data";
 import { useState, useEffect } from "react";
 import apiFetch from "@wordpress/api-fetch";
+// Available from global scope - need to use like this for Loco Translate plugin
+const __ = wp.i18n.__;
 
 wp.blocks.registerBlockType("ourplugin/featured-academic", {
   title: "Academic Callout",
@@ -83,7 +85,9 @@ function EditComponent(props) {
         <select
           onChange={(e) => props.setAttributes({ academicId: e.target.value })}
         >
-          <option value="">Select an academic</option>
+          <option value="">
+            {__("Select an academic", "featured-academic")}
+          </option>
           {allAcademics.map((academic) => {
             return (
               <option
