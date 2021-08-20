@@ -37,7 +37,15 @@ class FeaturedAcademic {
   }
 
   // REGISTER BLOCK TYPE
+  // REGISTER META FOR FEATURED ACADEMIC LINK
   function onInit() {
+    register_meta('post', 'featuredAcademic', array(
+      'show_in_rest' => true,
+      'type' => 'number',
+      // i.e. don't try to serialise multiple items into one db row, create separate row for each entry
+      'single' => false
+    ));
+
     wp_register_script('featuredAcademicScript', plugin_dir_url(__FILE__) . 'build/index.js', array('wp-blocks', 'wp-i18n', 'wp-editor'));
     wp_register_style('featuredAcademicStyle', plugin_dir_url(__FILE__) . 'build/index.css');
 

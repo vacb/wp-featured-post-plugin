@@ -126,19 +126,49 @@ wp.blocks.registerBlockType("ourplugin/featured-academic", {
 });
 
 function EditComponent(props) {
-  const [thePreview, setThePreview] = Object(react__WEBPACK_IMPORTED_MODULE_3__["useState"])("test");
-  Object(react__WEBPACK_IMPORTED_MODULE_3__["useEffect"])(() => {
-    async function go() {
-      const response = await _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_4___default()({
-        // Assumes /wp-json at the start
-        path: `/featuredAcademic/v1/getHTML?academicId=${props.attributes.academicId}`,
-        method: "GET"
-      });
-      setThePreview(response);
-    }
+  const [thePreview, setThePreview] = Object(react__WEBPACK_IMPORTED_MODULE_3__["useState"])(""); // USE EFFECT - CHANGE OF ACADEMIC IN DROPDOWN
 
-    go();
-  }, [props.attributes.academicId]);
+  Object(react__WEBPACK_IMPORTED_MODULE_3__["useEffect"])(() => {
+    // Only run if an academic has been selected, i.e. blank if still on 'select an academic'
+    if (props.attributes.academicId) {
+      updateTheMeta();
+
+      async function go() {
+        const response = await _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_4___default()({
+          // Assumes /wp-json at the start
+          path: `/featuredAcademic/v1/getHTML?academicId=${props.attributes.academicId}`,
+          method: "GET"
+        });
+        setThePreview(response);
+      }
+
+      go();
+    }
+  }, [props.attributes.academicId]); // USE EFFECT - BLOCK DELETED FROM EDIT SCREEN
+  // Call updateTheMeta again to make sure db is updated
+
+  Object(react__WEBPACK_IMPORTED_MODULE_3__["useEffect"])(() => {
+    // Return a cleanup function
+    return () => {
+      updateTheMeta();
+    };
+  }, []); // META DATA FOR FEATURED ACADEMICS
+  // Also need to register new meta in PHP
+
+  function updateTheMeta() {
+    // Returns a list of all blocks in the editor, then filter for our custom block type, then map to get array of post ID numbers
+    // Filter again to ensure meta only saved once per academic i.e. check for duplicate values
+    const academicsForMeta = wp.data.select("core/block-editor").getBlocks().filter(x => x.name == "ourplugin/featured-academic").map(x => x.attributes.academicId).filter((x, index, arr) => {
+      return arr.indexOf(x) == index;
+    });
+    console.log(academicsForMeta);
+    wp.data.dispatch("core/editor").editPost({
+      meta: {
+        featuredAcademic: academicsForMeta
+      }
+    });
+  }
+
   const allAcademics = Object(_wordpress_data__WEBPACK_IMPORTED_MODULE_2__["useSelect"])(select => {
     // In console: wp.data.select("core").getEntityRecords("postType", "academic", {per_page: -1})
     // Returns an array of all academic post type posts - can use instead of GET request to api endpoint

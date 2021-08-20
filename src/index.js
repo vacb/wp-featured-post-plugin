@@ -18,18 +18,52 @@ wp.blocks.registerBlockType("ourplugin/featured-academic", {
 });
 
 function EditComponent(props) {
-  const [thePreview, setThePreview] = useState("test");
+  const [thePreview, setThePreview] = useState("");
+  // USE EFFECT - CHANGE OF ACADEMIC IN DROPDOWN
   useEffect(() => {
-    async function go() {
-      const response = await apiFetch({
-        // Assumes /wp-json at the start
-        path: `/featuredAcademic/v1/getHTML?academicId=${props.attributes.academicId}`,
-        method: "GET",
-      });
-      setThePreview(response);
+    // Only run if an academic has been selected, i.e. blank if still on 'select an academic'
+    if (props.attributes.academicId) {
+      updateTheMeta();
+
+      async function go() {
+        const response = await apiFetch({
+          // Assumes /wp-json at the start
+          path: `/featuredAcademic/v1/getHTML?academicId=${props.attributes.academicId}`,
+          method: "GET",
+        });
+        setThePreview(response);
+      }
+      go();
     }
-    go();
   }, [props.attributes.academicId]);
+
+  // USE EFFECT - BLOCK DELETED FROM EDIT SCREEN
+  // Call updateTheMeta again to make sure db is updated
+  useEffect(() => {
+    // Return a cleanup function
+    return () => {
+      updateTheMeta();
+    };
+  }, []);
+
+  // META DATA FOR FEATURED ACADEMICS
+  // Also need to register new meta in PHP
+  function updateTheMeta() {
+    // Returns a list of all blocks in the editor, then filter for our custom block type, then map to get array of post ID numbers
+    // Filter again to ensure meta only saved once per academic i.e. check for duplicate values
+    const academicsForMeta = wp.data
+      .select("core/block-editor")
+      .getBlocks()
+      .filter((x) => x.name == "ourplugin/featured-academic")
+      .map((x) => x.attributes.academicId)
+      .filter((x, index, arr) => {
+        return arr.indexOf(x) == index;
+      });
+    console.log(academicsForMeta);
+    wp.data
+      .dispatch("core/editor")
+      .editPost({ meta: { featuredAcademic: academicsForMeta } });
+  }
 
   const allAcademics = useSelect((select) => {
     // In console: wp.data.select("core").getEntityRecords("postType", "academic", {per_page: -1})
