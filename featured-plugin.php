@@ -11,11 +11,21 @@ Author URI: https://github.com/vacb
 if( ! defined('ABSPATH')) exit;
 
 require_once plugin_dir_path( __FILE__ ) . 'inc/generateAcademicHTML.php';
+require_once plugin_dir_path( __FILE__ ) . 'inc/relatedPostsHTML.php';
 
 class FeaturedAcademic {
   function __construct() {
     add_action('init', [$this, 'onInit']);
     add_action('rest_api_init', [$this, 'academicHTML']);
+    add_filter('the_content', [$this, 'addRelatedPosts']);
+  }
+
+  // FILTER CONTENT ON ACADEMIC PAGES TO ADD LIST OF POSTS FEATURING THAT ACADEMIC
+  function addRelatedPosts($content) {
+    if (is_singular('academic') && in_the_loop() && is_main_query()) {
+      return $content . relatedPostsHTML(get_the_id());
+    }
+    return $content;
   }
 
 
